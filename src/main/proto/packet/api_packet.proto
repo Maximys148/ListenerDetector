@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package scanner.net.api.packet;
+
+import "packet/api_types.proto";
+
+message Reserved {
+  uint32 field = 1;
+}
+
+message Message {
+  Types type = 1;
+  bytes data = 2;
+  Reserved reserved = 3;
+}

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package scanner.net.api.data;
+
+import "common/device_info.proto";
+
+message JobParams {
+  uint64 cf_MHz = 1;
+  uint64 band_MHz = 2;
+  string comment = 3;
+}
+
+message JobInfo {
+  string uid = 1;
+  scanner.net.api.common.DeviceInfo device_info = 2;
+  bool is_running = 3;
+  JobParams params = 4;
+}
+
+message PacketLoadedJobsList {
+  repeated JobInfo jobs = 1;
+}

@@ -1,0 +1,10 @@
+server:
+  port: 7878
+
+websocket:
+  server:
+    url: "ws://localhost:9191"
+spring:
+  output:
+    ansi:
+      enabled: ALWAYS

@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package scanner.net.api.connectors;
+
+import "common/time.proto";
+import "data/signals_info.proto";
+import "data/jobs.proto";
+
+enum Type {
+  UNKNOWN = 0x00000000;
+  JOB_STARTED = 0x00000001;
+  JOB_STOPPED = 0x00000002;
+  JOB_CHANGED = 0x00000003;
+  JOB_SIGNALS_CHANGED = 0x00000004;
+  JOB_SPECTRUM_CHANGED = 0x00000005;
+}
+
+message Notifier {
+  string job_uid = 1;
+  repeated Type types = 2;
+}
+
+message PacketRegisterJobNotifier {
+  repeated Notifier jobs_notifiers = 1;
+}
+
+message PacketUnRegisterJobNotifier {
+  repeated string jobs_uids = 1;
+}
+
+message JobStarted {
+  scanner.net.api.common.LinuxTimeWithMs notified_at = 1;
+}
+
+message JobStopped {
+  scanner.net.api.common.LinuxTimeWithMs notified_at = 1;
+}
+
+message JobChanged {
+  scanner.net.api.common.LinuxTimeWithMs notified_at = 1;
+  scanner.net.api.data.JobParams job_params = 2;
+}
+
+message JobSignalsChanged {
+  scanner.net.api.common.LinuxTimeWithMs notified_at = 1;
+  repeated scanner.net.api.data.SignalsFromAntenna signals_info = 2;
+}
+
+message JobSpectrumChanged {
+  scanner.net.api.common.LinuxTimeWithMs notified_at = 1;
+  bytes spectrum = 2;
+  scanner.net.api.data.AntennaInfo antenna_info = 3;
+}
+
+message OnceNotify {
+  Type type = 1;
+  oneof notify {
+    JobStarted job_started = 2;
+    JobStopped job_stopped = 3;
+    JobChanged job_changed = 4;
+    JobSignalsChanged job_signals_changed = 5;
+    JobSpectrumChanged job_spectrum_changed = 6;
+  }
+}
+
+message JobNotify {
+  string job_uid = 1;
+  repeated OnceNotify notifies = 2;
+}
+
+message PacketJobsNotifies {
+  repeated JobNotify jobs_notifies = 1;
+}
