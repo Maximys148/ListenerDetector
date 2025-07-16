@@ -1,8 +1,8 @@
 package com.stupor.listenerdetector.handlers;
 
 
-import scanner.net.api.packet.ApiPacket;
-import scanner.net.api.packet.ApiTypes;
+import Scanner.Net.Api.Packet.ApiPacket;
+import Scanner.Net.Api.Packet.ApiTypes;
 
 /**
  * Интерфейс для обработки входящих сообщений от WebSocket сервера

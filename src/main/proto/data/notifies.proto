@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+package Scanner.Net.Api.Data;
+
+import "connectors/notifiers.proto";
+import "common/time.proto";
+import "data/jobs.proto";
+import "data/signals_info.proto";
+
+message JobStarted {
+  // время наступления события
+  Scanner.Net.Api.Common.LinuxTimeWithMs notified_at = 1;
+}
+
+message JobStopped {
+  // время наступления события
+  Scanner.Net.Api.Common.LinuxTimeWithMs notified_at = 1;
+}
+
+message JobChanged {
+  // время наступления события
+  Scanner.Net.Api.Common.LinuxTimeWithMs notified_at = 1;
+  // данные задания
+  Scanner.Net.Api.Data.JobInfo data = 2;
+}
+
+// вспомогательное сообщение
+message AntennaInfo {
+  // признак, антенна всенаправленная или направленная
+  bool    omni_or_directional = 1;
+  // наименование антенны
+  string  antenna_name        = 2;
+  // наименование направления
+  string  direction_name      = 3;
+}
+
+message SignalsFromAntenna {
+  // параметры антенной системы, с которой "сняты" данные
+  AntennaInfo antenna_info    = 1;
+  // перечень активных обнаруженных сигналов
+  // информация по "пропавшим" сигналам не транслируется
+  repeated OnceSignal active_signals = 2;
+}
+
+message SignalFromAntenna {
+  // параметры антенной системы, с которой "сняты" данные
+  AntennaInfo antenna_info    = 1;
+  // активный обнаруженный сигнал
+  OnceSignal active_signal    = 2;
+}
+
+message JobSignalsChanged {
+  // время наступления события
+  Scanner.Net.Api.Common.LinuxTimeWithMs notified_at = 1;
+  // информация о сигналах с антенной системы
+  repeated SignalsFromAntenna signals_info = 2;
+}
+
+message JobSignalsWithMaxLevelChanged {
+  // время наступления события
+  Scanner.Net.Api.Common.LinuxTimeWithMs notified_at = 1;
+  // информация о сигнале с антенной системы
+  SignalFromAntenna signal_info = 2;
+}
+
+// при работе на направленную антенну передается спектр, соответствующий макс. уровню сигнала
+message JobSpectrumChanged {
+  // время наступления события
+  Scanner.Net.Api.Common.LinuxTimeWithMs notified_at = 1;
+  // данные спектрограммы
+  // подготовленный массив для отображения
+  // для уровней сигналов -120...0
+  // передаются беззнаковые значения в положительной плоскости 0... 120
+  bytes spectrum = 2;
+  // параметры антенной системы, с которой "сняты" данные
+  AntennaInfo antenna_info   = 3;
+}
+
+message OnceNotify {
+  // тип нотификации
+  Scanner.Net.Api.Connectors.Type type = 1;
+
+  // данные нотификации - один из... (под каждый тип нотификации своя структура данных)
+  oneof notify {
+    // данные нотификации JOB_STARTED
+    JobStarted job_started      = 2;
+    // данные нотификации JOB_STOPPED
+    JobStopped job_stopped      = 3;
+    // данные нотификации JOB_CHANGED
+    JobChanged job_changed      = 4;
+    // данные нотификации JOB_SIGNALS_CHANGED
+    JobSignalsChanged job_signals_changed       = 5;
+    // данные нотификации JOB_SIGNALS_WITH_MAX_LEVEL
+    JobSignalsWithMaxLevelChanged job_signals_with_max_level_changed = 6;
+    // данные нотификации JOB_SPECTRUM_CHANGED
+    JobSpectrumChanged job_spectrum_changed     = 7;
+  }
+}
+
+message JobNotify {
+  // идентификатор задания
+  string job_uid  = 1;
+  // перечень сформированных нотификаций по заданию
+  repeated OnceNotify notifies = 2;
+}
+
+// нотификация о состоянии заданий
+// транслируется по сети (DATA_NOTIFIES) см. api_types.proto
+message PacketJobsNotifies {
+  // перечень сформированных нотификаций по заданиям
+  repeated JobNotify jobs_notifies = 1;
+}

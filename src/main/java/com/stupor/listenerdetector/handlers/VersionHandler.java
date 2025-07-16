@@ -2,9 +2,9 @@ package com.stupor.listenerdetector.handlers;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import scanner.net.api.common.ProtoInfo;
-import scanner.net.api.packet.ApiPacket;
-import scanner.net.api.packet.ApiTypes;
+import Scanner.Net.Api.Common.ProtoInfo;
+import Scanner.Net.Api.Packet.ApiPacket;
+import Scanner.Net.Api.Packet.ApiTypes;
 
 /**
  * Обработчик сообщений с версией протокола (COMMON_VERSION)

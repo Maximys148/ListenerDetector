@@ -1,20 +1,30 @@
 syntax = "proto3";
 
-package scanner.net.api.common;
+package Scanner.Net.Api.Common;
 
 message Actuality {
-  string date_str = 1;
-  int64 date_linux_time = 2;
+  // дата актуальности реализованного протокола обмена (строка)
+  string  date_str  = 1;
+  // дата актуальности реализованного протокола обмена (число), linux time (time_t)
+  int64   date_linux_time  = 2;
 }
 
 message Version {
-  uint32 major = 1;
-  uint32 middle = 2;
-  uint32 minor = 3;
-  string in_string = 4;
+  // старшая часть версии
+  uint32 major       = 1;
+  // средняя часть версии
+  uint32 middle      = 2;
+  // младшая часть версии
+  uint32 minor       = 3;
+  // строка с полной версией, например "0.1.123"
+  string in_string    = 4;
 }
 
+// информация о версии протокола информационного обмена
+// транслируется по сети (COMMON_VERSION) см. api_types.proto
 message PacketVersion {
-  Version version = 1;
-  Actuality actuality = 2;
+  // версия протокола обмена
+  Version  version        = 1;
+  // дата актуальности реализованного протокола обмена
+  Actuality actuality     = 2;
 }

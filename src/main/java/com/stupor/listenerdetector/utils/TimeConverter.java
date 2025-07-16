@@ -1,7 +1,7 @@
 package com.stupor.listenerdetector.utils;
 
 
-import scanner.net.api.common.Time;
+import Scanner.Net.Api.Common.Time;
 
 import java.time.Instant;
 

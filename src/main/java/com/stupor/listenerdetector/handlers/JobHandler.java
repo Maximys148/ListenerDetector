@@ -1,25 +1,26 @@
+/*
 package com.stupor.listenerdetector.handlers;
 
 
 import com.stupor.listenerdetector.client.DetectorClient;
 import com.stupor.listenerdetector.services.DetectorService;
-import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import scanner.net.api.connectors.Notifiers;
-import scanner.net.api.data.Jobs;
-import scanner.net.api.packet.ApiPacket;
-import scanner.net.api.packet.ApiTypes;
+import Scanner.Net.Api.Connectors.Notifiers;
+import Scanner.Net.Api.Data.Jobs;
+import Scanner.Net.Api.Packet.ApiPacket;
+import Scanner.Net.Api.Packet.ApiTypes;
 
 
 
+*/
 /**
  * Обработчик сообщений, связанных с заданиями и уведомлениями
- */
+ *//*
+
 public class JobHandler implements MessageHandler{
 
     private final DetectorService detectorService;
-    @Setter
     private DetectorClient detectorClient;
     private final Logger log = LogManager.getLogger(JobHandler.class);
 
@@ -81,7 +82,7 @@ public class JobHandler implements MessageHandler{
         detectorClient.sendMessage(message.toByteArray());
     }
     
-    private void handleNotifies(Notifiers.PacketJobsNotifies notifies) {
+    private void handleNotifies(Notifiers.p notifies) {
         for (var jobNotify : notifies.getJobsNotifiesList()) {
             for (var notify : jobNotify.getNotifiesList()) {
                 switch (notify.getType()) {
@@ -101,4 +102,4 @@ public class JobHandler implements MessageHandler{
         }
     }
 
-}
+}*/

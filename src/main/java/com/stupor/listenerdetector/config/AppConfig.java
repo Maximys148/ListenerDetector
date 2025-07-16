@@ -3,7 +3,7 @@ package com.stupor.listenerdetector.config;
 
 import com.stupor.listenerdetector.client.DetectorClient;
 import com.stupor.listenerdetector.client.WebSocketHandler;
-import com.stupor.listenerdetector.handlers.JobHandler;
+//import com.stupor.listenerdetector.handlers.JobHandler;
 import com.stupor.listenerdetector.handlers.VersionHandler;
 import com.stupor.listenerdetector.services.DetectorService;
 import org.springframework.context.annotation.Bean;
@@ -25,18 +25,18 @@ public class AppConfig {
         return new VersionHandler();
     }
     
-    @Bean
+    /*@Bean
     public JobHandler jobHandler() {
         return new JobHandler();
-    }
+    }*/
     
     @Bean
     public DetectorService detectorService() {return new DetectorService();}
     
     @Bean
     public DetectorClient detectorClient(WebSocketHandler webSocketHandler,
-                                         VersionHandler versionHandler,
-                                         JobHandler jobHandler) {
-        return new DetectorClient(webSocketHandler, versionHandler, jobHandler);
+                                         VersionHandler versionHandler
+                                         /*JobHandler jobHandler*/) {
+        return new DetectorClient(webSocketHandler, versionHandler /*jobHandler*/);
     }
 }

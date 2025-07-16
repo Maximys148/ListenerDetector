@@ -1,15 +1,19 @@
 syntax = "proto3";
 
-package scanner.net.api.packet;
+package Scanner.Net.Api.Packet;
 
 import "packet/api_types.proto";
 
 message Reserved {
-  uint32 field = 1;
+  uint32   field          = 1;
 }
 
+// Тип - пакет (основное сообщение), данные пакета выражают сущность обмена в соответствии с указанным типом
 message Message {
-  Types type = 1;
-  bytes data = 2;
-  Reserved reserved = 3;
+  // тип сообщения - один из перечисления
+  Scanner.Net.Api.Packet.Types type   = 1;
+  // сериализованные данные сообщения (конкретное proto-сообщение)
+  bytes       data                    = 2;
+  // резервное поле
+  Reserved    reserved                = 3;
 }

@@ -1,8 +1,11 @@
 syntax = "proto3";
 
-package scanner.net.api.common;
+package Scanner.Net.Api.Common;
 
+// сообщение с описанием устройства, за которым закреплено задание
 message DeviceInfo {
+  // наименование устройства
   string device_name = 1;
+  // аппаратный канал устройства (нумерация с 0)
   uint32 channel_number = 2;
 }

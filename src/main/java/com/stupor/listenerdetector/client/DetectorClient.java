@@ -1,9 +1,8 @@
 package com.stupor.listenerdetector.client;
 
 import com.stupor.listenerdetector.exceptions.DetectorException;
-import com.stupor.listenerdetector.handlers.JobHandler;
+//import com.stupor.listenerdetector.handlers.JobHandler;
 import com.stupor.listenerdetector.handlers.VersionHandler;
-import com.stupor.listenerdetector.services.DetectorService;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.apache.logging.log4j.LogManager;
@@ -19,9 +18,6 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Основной класс для работы с WebSocket API "Обнаружителя"
- */
 @Component
 public class DetectorClient {
     private final WebSocketHandler webSocketHandler;
@@ -34,114 +30,98 @@ public class DetectorClient {
 
     @Autowired
     public DetectorClient(WebSocketHandler webSocketHandler,
-                          VersionHandler versionHandler,
-                          JobHandler jobHandler) {
+                          VersionHandler versionHandler/*,
+                          JobHandler jobHandler*/) {
         this.webSocketHandler = webSocketHandler;
         this.webSocketHandler.registerHandler(versionHandler);
-        this.webSocketHandler.registerHandler(jobHandler);
+        /*this.webSocketHandler.registerHandler(jobHandler);*/
     }
 
     @PostConstruct
     public void init() {
-        log.info("Инициализация подключения к WebSocket серверу...");
+        log.info("Initializing connection to WebSocket server...");
         connect();
     }
 
     @PreDestroy
     public void cleanup() {
-        log.info("Завершение работы. Отключение от WebSocket сервера...");
+        log.info("Closing WebSocket connection...");
         disconnect();
     }
 
-    /**
-     * Подключение к WebSocket серверу "Обнаружителя"
-     */
     public void connect() {
         try {
-            log.info("Попытка подключения к WebSocket серверу по адресу: {}", serverUrl);
+            log.info("Connecting to WebSocket server at: {}", serverUrl);
             URI serverUri = new URI(serverUrl);
 
             client = new WebSocketClient(serverUri) {
                 @Override
                 public void onOpen(ServerHandshake handshakedata) {
-                    log.info("Успешное подключение к WebSocket серверу");
+                    log.info("WebSocket connection established");
                     connectionLatch.countDown();
                 }
 
                 @Override
                 public void onMessage(String message) {
-                    log.warn("Получено неожиданное текстовое сообщение: {}", message);
+                    log.warn("Unexpected text message received: {}", message);
                 }
 
                 @Override
                 public void onMessage(ByteBuffer bytes) {
-                    log.debug("Получено бинарное сообщение, обработка...");
+                    log.debug("Binary message received, processing...");
                     webSocketHandler.handleMessage(bytes.array());
                 }
 
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
-                    log.info("Соединение закрыто. Причина: {}", reason);
-                    log.info("Попытка переподключения через 5 секунд...");
-                    try {
-                        Thread.sleep(5000);
-                        connect();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        log.error("Ошибка при попытке переподключения", e);
-                    }
+                    log.info("Connection closed. Reason: {}", reason);
+                    scheduleReconnect();
                 }
 
                 @Override
                 public void onError(Exception ex) {
-                    log.error("Ошибка WebSocket соединения", ex);
+                    log.error("WebSocket error", ex);
                 }
             };
 
-            log.info("Установка соединения с сервером...");
             client.connect();
 
             if (!connectionLatch.await(10, TimeUnit.SECONDS)) {
-                throw new DetectorException("Таймаут подключения (10 секунд)");
+                throw new DetectorException("Connection timeout (10 seconds)");
             }
 
-            log.info("Соединение с WebSocket сервером успешно установлено");
+            log.info("Successfully connected to WebSocket server");
 
         } catch (Exception e) {
-            log.error("Ошибка при подключении к WebSocket серверу", e);
-            log.info("Повторная попытка подключения через 5 секунд...");
-            try {
-                Thread.sleep(5000);
-                connect();
-            } catch (InterruptedException ie) {
-                Thread.currentThread().interrupt();
-                log.error("Ошибка при попытке переподключения", ie);
-            }
+            log.error("WebSocket connection error", e);
+            scheduleReconnect();
         }
     }
 
-    /**
-     * Отключение от сервера
-     */
+    private void scheduleReconnect() {
+        log.info("Attempting to reconnect in 5 seconds...");
+        try {
+            Thread.sleep(5000);
+            connect();
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            log.error("Reconnect attempt interrupted", ie);
+        }
+    }
+
     public void disconnect() {
         if (client != null) {
-            log.info("Закрытие соединения с WebSocket сервером...");
             client.close();
-            log.info("Соединение с WebSocket сервером закрыто");
+            log.info("WebSocket connection closed");
         }
     }
 
-    /**
-     * Отправка сообщения на сервер
-     */
     public void sendMessage(byte[] message) {
         if (client != null && client.isOpen()) {
-            log.debug("Отправка сообщения на сервер...");
             client.send(message);
-            log.debug("Сообщение успешно отправлено");
+            log.debug("Message sent successfully");
         } else {
-            log.error("Невозможно отправить сообщение: соединение не установлено");
-            throw new DetectorException("WebSocket соединение не установлено");
+            throw new DetectorException("WebSocket connection not established");
         }
     }
 }

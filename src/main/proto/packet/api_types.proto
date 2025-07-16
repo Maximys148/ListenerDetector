@@ -1,12 +1,19 @@
 syntax = "proto3";
 
-package scanner.net.api.packet;
+package Scanner.Net.Api.Packet;
 
+// перечисление типов сообщений - глобальный enum на все типы пользовательских сообщений
 enum Types {
-  UNKNOWN = 0x00000000;
-  COMMON_VERSION = 0x00001001;
-  DATA_LOADED_JOBS_LIST = 0x00100001;
-  DATA_NOTIFIES = 0x00100002;
-  CONNECTORS_REGISTER_JOB_NOTIFIER = 0x01000001;
-  CONNECTORS_UNREGISTER_JOB_NOTIFIER = 0x01000002;
+  UNKNOWN                 = 0x00000000;
+
+  // COMMON - префикс для общей информации, сообщения стартуют с 0x0000_1000 (COMMON_DUMMY)
+  COMMON_VERSION          = 0x00001001;
+
+  // DATA - префикс для данных, сообщения стартуют с 0x0010_0000 (DATA_DUMMY)
+  DATA_LOADED_JOBS_LIST   = 0x00100001;
+  DATA_NOTIFIES           = 0x00100002;
+
+  // CONNECTORS - префикс для нотификаций, сообщения стартуют с 0x0100_0000 (CONNECTORS_DUMMY)
+  CONNECTORS_REGISTER_JOB_NOTIFIER    = 0x01000001;
+  CONNECTORS_UNREGISTER_JOB_NOTIFIER  = 0x01000002;
 }

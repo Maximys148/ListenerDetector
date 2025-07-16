@@ -1,23 +1,19 @@
 syntax = "proto3";
 
-package scanner.net.api.data;
+package Scanner.Net.Api.Data;
 
 import "common/time.proto";
 
+// описание структуры с одним сигналом
 message OnceSignal {
-  int64 uid = 1;
-  uint64 cf_MHz = 2;
-  uint64 band_MHz = 3;
-  float level_db = 4;
-  scanner.net.api.common.LinuxTimeWithMs linux_time = 5;
-}
-
-message SignalsFromAntenna {
-  int32 antenna_id = 1;
-  repeated OnceSignal signals = 2;
-}
-
-message AntennaInfo {
-  int32 id = 1;
-  string name = 2;
+  // уникальный идентификатор
+  int64 uid           = 1;
+  // центральная частота в МГц
+  double cf_MHz       = 2;
+  // полоса в МГц
+  double band_MHz     = 3;
+  // уровень сигнала
+  float level_db      = 4;
+  // время сигнала при выявлении
+  Scanner.Net.Api.Common.LinuxTimeWithMs linux_time    = 5;
 }

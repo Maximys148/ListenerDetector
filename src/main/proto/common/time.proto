@@ -1,8 +1,10 @@
 syntax = "proto3";
 
-package scanner.net.api.common;
+package Scanner.Net.Api.Common;
 
 message LinuxTimeWithMs {
-  uint64 sec = 1;
-  uint32 ms = 2;
+  // секундная часть времени (unix timestamp)
+  uint64  sec     = 1;
+  // миллисекундная часть времени (внутри секунды)
+  uint32  ms      = 2;
 }
