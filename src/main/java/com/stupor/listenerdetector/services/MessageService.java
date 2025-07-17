@@ -1,0 +1,132 @@
+package com.stupor.listenerdetector.services;
+
+import Scanner.Net.Api.Common.Time.LinuxTimeWithMs;
+import Scanner.Net.Api.Connectors.Notifiers;
+import Scanner.Net.Api.Data.Jobs;
+import Scanner.Net.Api.Data.Notifies;
+import Scanner.Net.Api.Data.Notifies.PacketJobsNotifies;
+import Scanner.Net.Api.Packet.ApiPacket;
+import Scanner.Net.Api.Packet.ApiTypes;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.stupor.listenerdetector.client.DetectorClient;
+import com.stupor.listenerdetector.dto.SignalDto;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.java_websocket.client.WebSocketClient;
+import org.springframework.stereotype.Service;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+
+@Service
+@RequiredArgsConstructor
+public class MessageService {
+    private final Map<String, JobInfo> activeSubscriptions = new ConcurrentHashMap<>();
+    private final Map<String, JobInfo> jobCache = new HashMap<>();
+    private DetectorClient client;
+    private final Logger log = LogManager.getLogger(MessageService.class);
+
+    public void processRawMessage(byte[] data) throws InvalidProtocolBufferException {
+        ApiPacket.Message message = ApiPacket.Message.parseFrom(data);
+
+        switch (message.getType()) {
+            case DATA_LOADED_JOBS_LIST:
+                processJobsList(message.getData().toByteArray());
+                break;
+            case DATA_NOTIFIES:
+                processNotifies(message.getData().toByteArray());
+                break;
+            case COMMON_VERSION:
+                log.info("Получена информация о версии протокола");
+                break;
+            default:
+                log.warn("Неизвестный тип сообщения: {}", message.getType());
+        }
+    }
+
+    private void processJobsList(byte[] data) throws InvalidProtocolBufferException {
+        Jobs.PacketLoadedJobsList jobsList = Jobs.PacketLoadedJobsList.parseFrom(data);
+
+        jobsList.getJobsList().forEach(job -> {
+            if (!activeSubscriptions.containsKey(job.getUid())) {
+                log.info("получено задание {}", job.getUid());
+                subscribeToJob(job.getUid());
+                activeSubscriptions.put(job.getUid(),
+                        new JobInfo(job.getUid(), job.getDevice().getDeviceName(), job.getParams().getCfMHz()));
+            }
+        });
+    }
+
+    private void processNotifies(byte[] data) throws InvalidProtocolBufferException {
+        PacketJobsNotifies notifies = PacketJobsNotifies.parseFrom(data);
+
+        notifies.getJobsNotifiesList().forEach(jobNotify -> {
+            jobNotify.getNotifiesList().forEach(notify -> {
+                if (notify.hasJobSignalsWithMaxLevelChanged()) {
+                    processMaxLevelSignal(
+                        jobNotify.getJobUid(),
+                        notify.getJobSignalsWithMaxLevelChanged()
+                    );
+                }
+            });
+        });
+    }
+
+    private void processMaxLevelSignal(String jobUid, Notifies.JobSignalsWithMaxLevelChanged signal) {
+        JobInfo job = jobCache.get(jobUid);
+        if (job == null) return;
+
+        LinuxTimeWithMs time = signal.getNotifiedAt();
+        long timestamp = time.getSec() * 1000 + time.getMs();
+
+        SignalDto dto = new SignalDto();
+        dto.setJobUid(jobUid);
+        dto.setDeviceName(job.getDeviceName());
+        dto.setFrequency(String.format("%.2f MHz", job.getFrequency()));
+        dto.setTimestamp(timestamp);
+        dto.setMaxSignalLevel((double) signal.getSignalInfo().getActiveSignal().getLevelDb());
+        dto.setPrivateId(String.valueOf(signal.getSignalInfo().getActiveSignal().getUid()));
+
+        log.info("Processed signal: {}", dto);
+    }
+
+    private void subscribeToJob(String jobUid) {
+        Notifiers.PacketRegisterJobNotifier subscription = Notifiers.PacketRegisterJobNotifier.newBuilder()
+                .addJobsNotifiers(Notifiers.Notifier.newBuilder()
+                        .setJobUid(jobUid)
+                        .addTypes(Notifiers.Type.JOB_SIGNALS_WITH_MAX_LEVEL_CHANGED)
+                        .addTypes(Notifiers.Type.JOB_SPECTRUM_CHANGED)
+                        .build())
+                .build();
+
+        client.sendMessage(subscription.toByteArray());
+        log.info("Оформлена подписка на задание: {}", jobUid);
+    }
+
+    private SignalDto convertToDto(String jobUid, Notifies.JobSignalsWithMaxLevelChanged signal) {
+        JobInfo job = activeSubscriptions.get(jobUid);
+        LinuxTimeWithMs time = signal.getNotifiedAt();
+        SignalDto dto = new SignalDto();
+        dto.setJobUid(jobUid);
+        dto.setDeviceName(job.getDeviceName());
+        dto.setFrequency(String.format("%.2f MHz", job.getFrequency()));
+        dto.setTimestamp(time.getSec() * 1000 + time.getMs());
+        dto.setMaxSignalLevel((double) signal.getSignalInfo().getActiveSignal().getLevelDb());
+        dto.setPrivateId(String.valueOf(signal.getSignalInfo().getActiveSignal().getUid()));
+        return dto;
+    }
+
+
+
+    @Data
+    @AllArgsConstructor
+    private static class JobInfo {
+        private String uid;
+        private String deviceName;
+        private double frequency;
+    }
+}

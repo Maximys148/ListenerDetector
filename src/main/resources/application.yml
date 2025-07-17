@@ -3,7 +3,7 @@ server:
 
 websocket:
   server:
-    url: "ws://localhost:9191"
+    url: ws://${IP:192.168.31.27}:7777  # URL API "Обнаружителя"
 spring:
   output:
     ansi:
