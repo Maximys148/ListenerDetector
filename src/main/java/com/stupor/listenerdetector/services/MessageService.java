@@ -10,6 +10,7 @@ import Scanner.Net.Api.Packet.ApiTypes;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.stupor.listenerdetector.client.DetectorClient;
 import com.stupor.listenerdetector.dto.SignalDto;
+import com.stupor.listenerdetector.kafka.KafkaProducer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageService {
     private final Map<String, JobInfo> activeSubscriptions = new ConcurrentHashMap<>();
     private final Map<String, JobInfo> jobCache = new HashMap<>();
+    private KafkaProducer kafkaProducer;
     private DetectorClient client;
     private final Logger log = LogManager.getLogger(MessageService.class);
 
@@ -83,15 +85,12 @@ public class MessageService {
         LinuxTimeWithMs time = signal.getNotifiedAt();
         long timestamp = time.getSec() * 1000 + time.getMs();
 
-        SignalDto dto = new SignalDto();
-        dto.setJobUid(jobUid);
-        dto.setDeviceName(job.getDeviceName());
-        dto.setFrequency(String.format("%.2f MHz", job.getFrequency()));
-        dto.setTimestamp(timestamp);
-        dto.setMaxSignalLevel((double) signal.getSignalInfo().getActiveSignal().getLevelDb());
-        dto.setPrivateId(String.valueOf(signal.getSignalInfo().getActiveSignal().getUid()));
+        SignalDto signalDto = convertToDto(jobUid, signal);
+        signalDto.setTimestamp(timestamp);
 
-        log.info("Processed signal: {}", dto);
+        kafkaProducer.sendMessage("signal", signalDto);
+
+        log.info("Processed signal: {}", signalDto);
     }
 
     private void subscribeToJob(String jobUid) {
@@ -111,7 +110,6 @@ public class MessageService {
         JobInfo job = activeSubscriptions.get(jobUid);
         LinuxTimeWithMs time = signal.getNotifiedAt();
         SignalDto dto = new SignalDto();
-        dto.setJobUid(jobUid);
         dto.setDeviceName(job.getDeviceName());
         dto.setFrequency(String.format("%.2f MHz", job.getFrequency()));
         dto.setTimestamp(time.getSec() * 1000 + time.getMs());
