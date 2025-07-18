@@ -115,6 +115,7 @@ public class MessageService {
         dto.setTimestamp(time.getSec() * 1000 + time.getMs());
         dto.setMaxSignalLevel((double) signal.getSignalInfo().getActiveSignal().getLevelDb());
         dto.setPrivateId(String.valueOf(signal.getSignalInfo().getActiveSignal().getUid()));
+        dto.setDirection(signal.getSignalInfo().getAntennaInfo().getDirectionName());
         return dto;
     }
 
