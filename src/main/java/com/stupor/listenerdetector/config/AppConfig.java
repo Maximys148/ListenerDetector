@@ -2,9 +2,7 @@ package com.stupor.listenerdetector.config;
 
 
 import com.stupor.listenerdetector.client.DetectorClient;
-//import com.stupor.listenerdetector.handlers.JobHandler;
 import com.stupor.listenerdetector.services.MessageService;
-import com.stupor.listenerdetector.services.DetectorService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,10 +18,7 @@ public class AppConfig {
     }
     
     @Bean
-    public DetectorService detectorService() {return new DetectorService();}
-    
-    @Bean
-    public DetectorClient detectorClient(MessageService messageService) {
+    public DetectorClient detectorClient() {
         return new DetectorClient();
     }
 }

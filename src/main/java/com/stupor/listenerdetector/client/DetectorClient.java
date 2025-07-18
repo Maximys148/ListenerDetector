@@ -8,7 +8,6 @@ import com.stupor.listenerdetector.exceptions.DetectorException;
 import com.stupor.listenerdetector.services.MessageService;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import lombok.SneakyThrows;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.java_websocket.client.WebSocketClient;
