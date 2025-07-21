@@ -5,6 +5,13 @@ websocket:
   server:
     url: ws://${IP:192.168.31.27}:7777  # URL API "Обнаружителя"
 spring:
+  kafka:
+    producer:
+      bootstrap-servers: ${KAFKA_URL:192.168.50.34:9094}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      spring.json.add.type.headers: false
   output:
     ansi:
       enabled: ALWAYS

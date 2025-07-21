@@ -13,7 +13,6 @@ public class SignalDto {
     private Long timestamp;          // Время обнаружения сигнала (мс или Unix-время)
     private String frequency;        // Частота сигнала (например, "850.5 MHz")
     private String deviceImei;       // IMEI устройства, обнаружившего сигнал
-    private String deviceName;       // Название устройства (из DeviceInfo)
     private Double maxSignalLevel;   // Максимальный уровень сигнала (в dBm)
     private String direction;        // Направление (если доступно)
 }
