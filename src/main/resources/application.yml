@@ -3,11 +3,11 @@ server:
 
 websocket:
   server:
-    url: ws://${IP:192.168.31.27}:7777  # URL API "Обнаружителя"
+    url: ws://${IP:192.168.40.139}:7777  # URL API "Обнаружителя"
 spring:
   kafka:
     producer:
-      bootstrap-servers: ${KAFKA_URL:192.168.50.34:9094}
+      bootstrap-servers: ${KAFKA_URL:192.168.31.36:9094}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     properties:

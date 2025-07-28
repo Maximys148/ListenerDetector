@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class KafkaProducer {
-    @Autowired
-    private DeviceState deviceState;
+    private final DeviceState deviceState;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final Logger log = LogManager.getLogger(KafkaProducer.class);
 
-    public KafkaProducer(KafkaTemplate<String, Object> kafkaTemplate) {
+    public KafkaProducer(KafkaTemplate<String, Object> kafkaTemplate, DeviceState deviceState) {
         this.kafkaTemplate = kafkaTemplate;
+        this.deviceState = deviceState;
     }
 
     public void sendMessage(String topic, Object message) {

@@ -34,7 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageService {
     private final Map<String, JobInfo> activeSubscriptions = new ConcurrentHashMap<>();
     private final Map<String, JobInfo> jobCache = new HashMap<>();
-    private DeviceState deviceState;
     private KafkaProducer kafkaProducer;
     private DetectorClient client;
     private final Logger log = LogManager.getLogger(MessageService.class);
