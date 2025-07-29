@@ -27,7 +27,7 @@ public class KafkaProducer {
 
     @Scheduled(fixedRate = 5000)
     public void sendDeviceStatesToKafka() {
-        log.debug("Отправлено состояние устройства: {}", deviceState.getPublicId());
+        log.debug("Отправлено состояние устройства: {}", deviceState);
         kafkaTemplate.send("device", deviceState);
     }
 }
