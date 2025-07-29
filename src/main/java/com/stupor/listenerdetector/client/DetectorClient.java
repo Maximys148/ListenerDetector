@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class DetectorClient {
-    private static final Logger log = LogManager.getLogger(DetectorClient.class);
+    private final Logger log = LogManager.getLogger(DetectorClient.class);
     private WebSocketClient client;
     private MessageService messageService;
     private final CountDownLatch connectionLatch = new CountDownLatch(1);
@@ -87,6 +87,7 @@ public class DetectorClient {
     public void sendMessage(byte[] data) {
         if (client != null && client.isOpen()) {
             client.send(data);
+            log.debug("Сообщение отправлено {}", data);
         } else {
             log.error("Не удалось отправить сообщение - соединение не активно");
             throw new DetectorException("WebSocket соединение не установлено");
@@ -120,7 +121,6 @@ public class DetectorClient {
                     .toByteArray();
 
             sendMessage(data);
-            log.debug("Отправлено сообщение типа {}", messageType);
         } catch (Exception e) {
             log.error("Ошибка формирования protobuf сообщения", e);
             throw new DetectorException("Ошибка отправки сообщения");
