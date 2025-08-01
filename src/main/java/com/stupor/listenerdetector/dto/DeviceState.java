@@ -15,7 +15,7 @@ public class DeviceState {
     private String publicId; // Название
     private String privateId; // IMEI (лицензия)
     private Location point; // координата
-    private final String model = "shtilFormator";
+    private final String model = "shtilFarvater";
     private DeviceType type = DeviceType.RF_SCANNER; // тип устройства
     @JsonProperty("isConnected")
     private boolean isConnected; // Статус подключения

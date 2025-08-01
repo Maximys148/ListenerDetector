@@ -1,12 +1,12 @@
 {
-  "publicId" : "shtilFormotator",
-  "privateId" : "shtilFormotator",
+  "publicId" : "shtilFarvater",
+  "privateId" : "shtilFarvater",
   "point" : {
     "longitude" : "37.4743652",
     "latitude" : "55.8402413"
   },
   "type" : "RF_SCANNER",
-  "model" : "shtilFormotator",
+  "model" : "shtilFarvater",
   "character" : {
   }
 }

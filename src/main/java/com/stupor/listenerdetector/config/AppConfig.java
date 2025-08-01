@@ -36,12 +36,16 @@ public class AppConfig {
         Resource resource = resourceLoader.getResource("classpath:SEH.json");
         InputStream inputStream = resource.getInputStream();
         DeviceState deviceState = objectMapper().readValue(inputStream, DeviceState.class);
-        deviceState.setPublicId("RandomPublicId");
-        deviceState.setPrivateId("RandomPrivateId");
-        deviceState.setPoint(new Location(0.0, 0.0));
+        deviceState.setPublicId("Штиль Фарватер-1");
+        deviceState.setPrivateId("shtilFarvater-1");
+        deviceState.setPoint(new Location(56.075101, 36.763000));
         deviceState.setType(DeviceType.RF_SCANNER);
-        deviceState.setConnected(true);
-        deviceState.setCharacter(new HashMap<>());
+        deviceState.setConnected(false);
+        HashMap<String, String> character = new HashMap<>();
+        character.put("ip", "192.168.1.205");
+        character.put("port", "7777");
+        character.put("radius", "8000");
+        deviceState.setCharacter(character);
         return deviceState;
     }
     

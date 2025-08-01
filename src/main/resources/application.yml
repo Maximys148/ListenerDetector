@@ -7,7 +7,7 @@ websocket:
 spring:
   kafka:
     producer:
-      bootstrap-servers: ${KAFKA_URL:192.168.31.36:9094}
+      bootstrap-servers: ${KAFKA_URL:192.168.31.34:29092}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     properties:

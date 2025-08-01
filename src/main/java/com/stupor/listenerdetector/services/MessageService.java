@@ -35,7 +35,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class MessageService {
     private final Map<String, JobInfo> activeSubscriptions = new ConcurrentHashMap<>();
-    private final Map<String, JobInfo> jobCache = new HashMap<>();
     //private KafkaProducer kafkaProducer;
     private WebSocketClient webSocketClient;
     private final Logger log = LogManager.getLogger(MessageService.class);

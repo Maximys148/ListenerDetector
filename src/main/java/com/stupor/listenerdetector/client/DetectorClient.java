@@ -31,7 +31,7 @@ public class DetectorClient {
     @Value("${websocket.server.url}")
     private String serverUrl;
 
-    @PostConstruct
+    //@PostConstruct
     public void connect() {
         log.info("Старт в новой версии");
         try {
