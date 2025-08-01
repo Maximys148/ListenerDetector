@@ -4,7 +4,13 @@ server:
 websocket:
   server:
     url: ws://${IP:localhost}:7777  # URL API "Обнаружителя"
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL:http://192.168.31.34:8761/eureka}
 spring:
+  application:
+    name: NODE-SHTIL-FARVATER-${NUM:1}
   kafka:
     producer:
       bootstrap-servers: ${KAFKA_URL:192.168.31.34:29092}
