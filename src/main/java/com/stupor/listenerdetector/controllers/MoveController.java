@@ -5,10 +5,7 @@ import com.stupor.listenerdetector.services.MoveService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/shtilFarvater")
@@ -20,6 +17,7 @@ public class MoveController {
         this.moveService = moveService;
     }
 
+    @CrossOrigin
     @PostMapping("/dashboard_post")
     public ResponseEntity<?> moveFarvater(@RequestBody Location location) {
         log.info("API Post /api/dashboard_post | Запрос на передвижение фарватера, тело запроса: {}", location);
