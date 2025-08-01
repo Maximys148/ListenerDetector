@@ -45,7 +45,7 @@ public class AppConfig {
         return deviceState;
     }
     
-    @Bean
+    /*@Bean
     public MessageService messageProcessor() {
         return new MessageService();
     }
@@ -53,5 +53,5 @@ public class AppConfig {
     @Bean
     public DetectorClient detectorClient() {
         return new DetectorClient();
-    }
+    }*/
 }

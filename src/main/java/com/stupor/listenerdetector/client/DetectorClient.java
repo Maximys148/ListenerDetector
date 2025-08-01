@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.net.URI;
@@ -22,7 +23,8 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class DetectorClient {
     private final Logger log = LogManager.getLogger(DetectorClient.class);
-    private WebSocketClient client;
+    private WebSocketClient webSocketClient;
+    @Autowired
     private MessageService messageService;
     private final CountDownLatch connectionLatch = new CountDownLatch(1);
 
@@ -31,9 +33,10 @@ public class DetectorClient {
 
     @PostConstruct
     public void connect() {
+        log.info("Старт в новой версии");
         try {
             URI serverUri = new URI(serverUrl);
-            client = new WebSocketClient(serverUri) {
+            webSocketClient = new WebSocketClient(serverUri) {
                 @Override
                 public void onOpen(ServerHandshake handshakedata) {
                     log.info("Успешное подключение к WebSocket серверу");
@@ -68,9 +71,10 @@ public class DetectorClient {
                     log.error("Ошибка WebSocket соединения", ex);
                 }
             };
-
+            messageService.setWebSocketClient(webSocketClient);
             log.info("Подключаемся к WebSocket серверу: {}", serverUrl);
-            client.connect();
+            webSocketClient.connect();
+
 
             if (!connectionLatch.await(10, TimeUnit.SECONDS)) {
                 throw new DetectorException("Таймаут подключения к WebSocket");
@@ -84,15 +88,15 @@ public class DetectorClient {
     /**
      * Отправка бинарного сообщения через WebSocket
      */
-    public void sendMessage(byte[] data) {
-        if (client != null && client.isOpen()) {
-            client.send(data);
+    /*public void sendMessage(byte[] data) {
+        if (webSocketClient != null && webSocketClient.isOpen()) {
+            webSocketClient.send(data);
             log.debug("Сообщение отправлено {}", data);
         } else {
             log.error("Не удалось отправить сообщение - соединение не активно");
             throw new DetectorException("WebSocket соединение не установлено");
         }
-    }
+    }*/
 
     /**
      * Метод для подписки на задание
@@ -120,7 +124,7 @@ public class DetectorClient {
                     .build()
                     .toByteArray();
 
-            sendMessage(data);
+            messageService.sendMessage(data);
         } catch (Exception e) {
             log.error("Ошибка формирования protobuf сообщения", e);
             throw new DetectorException("Ошибка отправки сообщения");
@@ -140,9 +144,9 @@ public class DetectorClient {
 
     @PreDestroy
     public void disconnect() {
-        if (client != null) {
+        if (webSocketClient != null) {
             log.info("Закрытие WebSocket соединения");
-            client.close();
+            webSocketClient.close();
         }
     }
 

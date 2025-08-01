@@ -29,6 +29,11 @@
             <AppenderRef ref="STDOUT"/>
         </Logger>
 
+        <Logger name="org.apache.kafka" level="off" additivity="false">
+            <AppenderRef ref="ROLLING"/>
+            <AppenderRef ref="STDOUT"/>
+        </Logger>
+
         <!-- Корневой логгер (только ошибки) -->
         <Root level="warn">
             <AppenderRef ref="STDOUT"/>

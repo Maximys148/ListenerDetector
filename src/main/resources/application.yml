@@ -3,7 +3,7 @@ server:
 
 websocket:
   server:
-    url: ws://${IP:192.168.40.139}:7777  # URL API "Обнаружителя"
+    url: ws://${IP:localhost}:7777  # URL API "Обнаружителя"
 spring:
   kafka:
     producer:

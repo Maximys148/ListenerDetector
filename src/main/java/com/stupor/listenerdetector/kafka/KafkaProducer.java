@@ -1,3 +1,4 @@
+/*
 package com.stupor.listenerdetector.kafka;
 
 import com.stupor.listenerdetector.dto.DeviceState;
@@ -31,3 +32,4 @@ public class KafkaProducer {
         kafkaTemplate.send("device", deviceState);
     }
 }
+*/

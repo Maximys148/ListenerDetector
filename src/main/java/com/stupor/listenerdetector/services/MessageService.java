@@ -13,13 +13,16 @@ import com.stupor.listenerdetector.dto.DeviceState;
 import com.stupor.listenerdetector.dto.Location;
 import com.stupor.listenerdetector.dto.SignalDto;
 import com.stupor.listenerdetector.dto.enums.DeviceType;
-import com.stupor.listenerdetector.kafka.KafkaProducer;
+import com.stupor.listenerdetector.exceptions.DetectorException;
+//import com.stupor.listenerdetector.kafka.KafkaProducer;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.java_websocket.client.WebSocketClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,13 +33,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 @Service
-@RequiredArgsConstructor
 public class MessageService {
     private final Map<String, JobInfo> activeSubscriptions = new ConcurrentHashMap<>();
     private final Map<String, JobInfo> jobCache = new HashMap<>();
-    private KafkaProducer kafkaProducer;
-    private DetectorClient client;
+    //private KafkaProducer kafkaProducer;
+    private WebSocketClient webSocketClient;
     private final Logger log = LogManager.getLogger(MessageService.class);
+
+    /*public MessageService(KafkaProducer kafkaProducer) {
+        this.kafkaProducer = kafkaProducer;
+    }*/
+
+    public void setWebSocketClient(WebSocketClient webSocketClient) {
+        this.webSocketClient = webSocketClient;
+    }
 
     public void processRawMessage(byte[] data) throws InvalidProtocolBufferException {
         ApiPacket.Message message = ApiPacket.Message.parseFrom(data);
@@ -57,6 +67,7 @@ public class MessageService {
     }
 
     private void processJobsList(byte[] data) throws InvalidProtocolBufferException {
+        //log.info("Полученное тело: {}", new String(data));
         Jobs.PacketLoadedJobsList jobsList = Jobs.PacketLoadedJobsList.parseFrom(data);
         jobsList.getJobsList().forEach(job -> {
             if (!activeSubscriptions.containsKey(job.getUid())) {
@@ -70,7 +81,7 @@ public class MessageService {
 
     private void processNotifies(byte[] data) throws InvalidProtocolBufferException {
         PacketJobsNotifies notifies = PacketJobsNotifies.parseFrom(data);
-
+        //log.info("Пакет получен: {}", notifies);
         notifies.getJobsNotifiesList().forEach(jobNotify -> {
             jobNotify.getNotifiesList().forEach(notify -> {
                 if (notify.hasJobSignalsWithMaxLevelChanged()) {
@@ -78,23 +89,24 @@ public class MessageService {
                         jobNotify.getJobUid(),
                         notify.getJobSignalsWithMaxLevelChanged()
                     );
+                    log.info("Нотификация обработана: {}", jobNotify.getJobUid());
                 }
             });
         });
     }
 
     private void processMaxLevelSignal(String jobUid, Notifies.JobSignalsWithMaxLevelChanged signal) {
-        JobInfo job = jobCache.get(jobUid);
+        JobInfo job = activeSubscriptions.get(jobUid);
+        log.info("Проверяем максимальный сигнал: {}", job.toString());
         if (job == null) return;
 
         SignalDto signalDto = convertToDto(jobUid, signal);
-
-        kafkaProducer.sendMessage("signal", signalDto);
-
+        //kafkaProducer.sendMessage("signal", signalDto);
         log.info("Обработанный сигнал: {}", signalDto);
     }
 
     private void subscribeToJob(String jobUid) {
+        // 1. Создаем подписку
         Notifiers.PacketRegisterJobNotifier subscription = Notifiers.PacketRegisterJobNotifier.newBuilder()
                 .addJobsNotifiers(Notifiers.Notifier.newBuilder()
                         .setJobUid(jobUid)
@@ -103,11 +115,19 @@ public class MessageService {
                         .build())
                 .build();
 
-        client.sendMessage(subscription.toByteArray());
+        // 2. Упаковываем в ApiPacket.Message
+        ApiPacket.Message message = ApiPacket.Message.newBuilder()
+                .setType(ApiTypes.Types.CONNECTORS_REGISTER_JOB_NOTIFIER) // Указываем тип пакета!
+                .setData(subscription.toByteString())
+                .build();
+
+        // 3. Отправляем сериализованное сообщение
+        sendMessage(message.toByteArray());
         log.info("Оформлена подписка на задание: {}", jobUid);
     }
 
     private SignalDto convertToDto(String jobUid, Notifies.JobSignalsWithMaxLevelChanged signal) {
+        log.info("Начата конвертация сигнала");
         JobInfo job = activeSubscriptions.get(jobUid);
         LinuxTimeWithMs time = signal.getNotifiedAt();
         SignalDto dto = new SignalDto();
@@ -115,9 +135,25 @@ public class MessageService {
         dto.setFrequency(String.format("%.2f MHz", job.getFrequency()));
         dto.setTimestamp(time.getSec() * 1000 + time.getMs());
         dto.setMaxSignalLevel((double) signal.getSignalInfo().getActiveSignal().getLevelDb());
-        dto.setPrivateId(String.valueOf(signal.getSignalInfo().getActiveSignal().getUid()));
+        dto.setPrivateId("signal" + String.format("%.2f MHz", job.getFrequency()));
+        dto.setPublicId("signal" + String.format("%.2f MHz", job.getFrequency()));
         dto.setDirection(signal.getSignalInfo().getAntennaInfo().getDirectionName());
+        log.info("Закончили конвертацию сигнала");
         return dto;
+    }
+
+    /**
+     * Отправка бинарного сообщения через WebSocket
+     */
+    public void sendMessage(byte[] data) {
+        log.info("Отправляемое тело: {}", new String(data));
+        if (webSocketClient != null && webSocketClient.isOpen()) {
+            webSocketClient.send(data);
+            log.info("Сообщение отправлено {}", data);
+        } else {
+            log.error("Не удалось отправить сообщение - соединение не активно");
+            throw new DetectorException("WebSocket соединение не установлено");
+        }
     }
 
     @Data
