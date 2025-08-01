@@ -21,8 +21,8 @@ public class MoveController {
     }
 
     @PostMapping("/dashboard_post")
-    public ResponseEntity<?> createPolygonZone(@RequestBody Location location) {
-        log.info("API Post /api/zones/polygon |  Запрос на создание зоны типа: POLYGON, тело запроса: {}", location);
+    public ResponseEntity<?> moveFarvater(@RequestBody Location location) {
+        log.info("API Post /api/dashboard_post | Запрос на передвижение фарватера, тело запроса: {}", location);
         moveService.moveFarvater(location);
         return ResponseEntity.status(201).body(location);
     }
