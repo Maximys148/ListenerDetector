@@ -44,7 +44,6 @@ Real-time система обнаружения сигналов радиоча�
 - Главный класс приложения
 
 ## 📄 Документация
-![Documentation](https://img.shields.io/badge/Documentation-8A2BE2?style=for-the-badge&logo=readthedocs&logoColor=white)  
 [Описание API](https://github.com/user-attachments/files/21795144/API.1.docx)
 
 ## 🛠️ Технологический стек
