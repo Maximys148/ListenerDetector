@@ -13,6 +13,7 @@ Real-time система обнаружения дронов через анал
 ![Java](https://img.shields.io/badge/Java-17-ED8B00?logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2.5-6DB33F?logo=springboot)
 ![WebSocket](https://img.shields.io/badge/WebSocket-010101?logo=websocket&logoColor=white)
+![REST](https://img.shields.io/badge/REST-FF6C37?style=for-the-badge&logo=rest&logoColor=white)
 ![Kafka](https://img.shields.io/badge/Kafka-231F20?logo=apachekafka&logoColor=white)
 ![Protocol Buffers](https://img.shields.io/badge/Protocol_Buffers-3178C6?logo=protobuf&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-24.0-2496ED?logo=docker)
