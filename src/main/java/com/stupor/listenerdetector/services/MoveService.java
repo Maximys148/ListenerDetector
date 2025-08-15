@@ -1,6 +1,5 @@
 package com.stupor.listenerdetector.services;
 
-import com.stupor.listenerdetector.client.DetectorClient;
 import com.stupor.listenerdetector.dto.DeviceState;
 import com.stupor.listenerdetector.dto.Location;
 import org.apache.logging.log4j.LogManager;

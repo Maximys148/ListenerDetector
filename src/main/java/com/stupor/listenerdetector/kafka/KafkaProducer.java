@@ -31,11 +31,11 @@ public class KafkaProducer {
 
     @Scheduled(fixedRate = 5000)
     public void sendDeviceStatesToKafka() {
-        log.info("Отправлено состояние устройства: {}", deviceState);
+        //log.info("Отправлено состояние устройства: {}", deviceState);
         kafkaTemplate.send("devices", deviceState);
     }
 
-    @Scheduled(fixedRate = 5000)
+/*    @Scheduled(fixedRate = 5000)
     public void sendSignalToKafka() {
         SignalDto signalDto = generateRandomSignal();
         log.info("Отправка сигнала: {}", generateRandomSignal());
@@ -53,5 +53,5 @@ public class KafkaProducer {
         signalDto.setTimestamp(System.currentTimeMillis());
         signalDto.setDirection(directions.get(new Random().nextInt(directions.size())));
         return signalDto;
-    }
+    }*/
 }

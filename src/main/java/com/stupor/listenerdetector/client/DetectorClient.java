@@ -15,6 +15,7 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
@@ -31,7 +32,7 @@ public class DetectorClient {
     @Value("${websocket.server.url}")
     private String serverUrl;
 
-    //@PostConstruct
+    @PostConstruct
     public void connect() {
         log.info("Старт в новой версии");
         try {
@@ -77,7 +78,7 @@ public class DetectorClient {
 
 
             if (!connectionLatch.await(10, TimeUnit.SECONDS)) {
-                throw new DetectorException("Таймаут подключения к WebSocket");
+                //throw new DetectorException("Таймаут подключения к WebSocket");
             }
         } catch (Exception e) {
             log.error("Ошибка при подключении к WebSocket", e);
@@ -88,7 +89,7 @@ public class DetectorClient {
     /**
      * Отправка бинарного сообщения через WebSocket
      */
-    /*public void sendMessage(byte[] data) {
+    public void sendMessage(byte[] data) {
         if (webSocketClient != null && webSocketClient.isOpen()) {
             webSocketClient.send(data);
             log.debug("Сообщение отправлено {}", data);
@@ -96,7 +97,7 @@ public class DetectorClient {
             log.error("Не удалось отправить сообщение - соединение не активно");
             throw new DetectorException("WebSocket соединение не установлено");
         }
-    }*/
+    }
 
     /**
      * Метод для подписки на задание

@@ -3,7 +3,7 @@ server:
 
 websocket:
   server:
-    url: ws://${IP:localhost}:7777  # URL API "Обнаружителя"
+    url: ws://${API_IP:localhost}:7777  # URL API "Обнаружителя"
 eureka:
   client:
     serviceUrl:

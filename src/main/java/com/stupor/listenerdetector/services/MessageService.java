@@ -15,6 +15,7 @@ import com.stupor.listenerdetector.dto.SignalDto;
 import com.stupor.listenerdetector.dto.enums.DeviceType;
 import com.stupor.listenerdetector.exceptions.DetectorException;
 //import com.stupor.listenerdetector.kafka.KafkaProducer;
+import com.stupor.listenerdetector.kafka.KafkaProducer;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,13 +36,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class MessageService {
     private final Map<String, JobInfo> activeSubscriptions = new ConcurrentHashMap<>();
-    //private KafkaProducer kafkaProducer;
+    private KafkaProducer kafkaProducer;
     private WebSocketClient webSocketClient;
     private final Logger log = LogManager.getLogger(MessageService.class);
 
-    /*public MessageService(KafkaProducer kafkaProducer) {
+    public MessageService(KafkaProducer kafkaProducer) {
         this.kafkaProducer = kafkaProducer;
-    }*/
+    }
 
     public void setWebSocketClient(WebSocketClient webSocketClient) {
         this.webSocketClient = webSocketClient;
@@ -100,7 +101,7 @@ public class MessageService {
         if (job == null) return;
 
         SignalDto signalDto = convertToDto(jobUid, signal);
-        //kafkaProducer.sendMessage("signal", signalDto);
+        kafkaProducer.sendMessage("signal", signalDto);
         log.info("Обработанный сигнал: {}", signalDto);
     }
 
