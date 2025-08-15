@@ -1,5 +1,6 @@
 package com.stupor.listenerdetector.controllers;
 
+import com.stupor.listenerdetector.dto.FarvaterDTO;
 import com.stupor.listenerdetector.dto.Location;
 import com.stupor.listenerdetector.services.MoveService;
 import org.apache.logging.log4j.LogManager;
@@ -19,9 +20,9 @@ public class MoveController {
 
     @CrossOrigin
     @PostMapping("/dashboard_post")
-    public ResponseEntity<?> moveFarvater(@RequestBody Location location) {
-        log.info("API Post /api/dashboard_post | Запрос на передвижение фарватера, тело запроса: {}", location);
-        moveService.moveFarvater(location);
-        return ResponseEntity.status(201).body(location);
+    public ResponseEntity<?> moveFarvater(@RequestBody FarvaterDTO farvaterDTO) {
+        log.info("API Post /api/dashboard_post | Запрос на передвижение фарватера, тело запроса: {}", farvaterDTO);
+        moveService.moveFarvater(farvaterDTO);
+        return ResponseEntity.status(201).body(farvaterDTO);
     }
 }
