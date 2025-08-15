@@ -16,21 +16,3 @@ Real-time система обнаружения дронов через анал
 ![Kafka](https://img.shields.io/badge/Kafka-231F20?logo=apachekafka&logoColor=white)
 ![Protocol Buffers](https://img.shields.io/badge/Protocol_Buffers-3178C6?logo=protobuf&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-24.0-2496ED?logo=docker)
-
-## 🚀 Быстрый старт
-
-### Требования
-- JDK 17+
-- Docker 24.0+
-- Kafka 3.4+
-
-```bash
-# 1. Клонировать репозиторий
-git clone https://github.com/Maximys148/ListenerDetector.git
-cd ListenerDetector
-
-# 2. Запустить сервисы
-docker-compose up -d
-
-# 3. Собрать и запустить приложение
-mvn spring-boot:run
