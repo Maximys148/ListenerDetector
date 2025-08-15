@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FarvaterDTO {
-    private String radius;
-    private String longitude;
-    private String latitude;
     private String ip;
+    private String latitude;
+    private String longitude;
     private String port;
-    private String publicId;
+    private String public_Id;
+    private String radius;
 }
