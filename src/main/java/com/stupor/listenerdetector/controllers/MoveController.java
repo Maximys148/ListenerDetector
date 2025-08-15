@@ -1,7 +1,6 @@
 package com.stupor.listenerdetector.controllers;
 
 import com.stupor.listenerdetector.dto.FarvaterDTO;
-import com.stupor.listenerdetector.dto.Location;
 import com.stupor.listenerdetector.services.MoveService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

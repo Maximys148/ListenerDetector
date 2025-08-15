@@ -131,7 +131,7 @@ public class MessageService {
         JobInfo job = activeSubscriptions.get(jobUid);
         LinuxTimeWithMs time = signal.getNotifiedAt();
         SignalDto dto = new SignalDto();
-        dto.setDeviceImei(job.getDeviceName());
+        dto.setDeviceImei("shtilFarvater-1");
         dto.setFrequency(String.format("%.2f MHz", job.getFrequency()));
         dto.setTimestamp(time.getSec() * 1000 + time.getMs());
         dto.setMaxSignalLevel((double) signal.getSignalInfo().getActiveSignal().getLevelDb());
