@@ -67,7 +67,7 @@ public class MessageService {
     }
 
     private void processJobsList(byte[] data) throws InvalidProtocolBufferException {
-        //log.info("Полученное тело: {}", new String(data));
+        log.info("Полученное тело: {}", new String(data));
         Jobs.PacketLoadedJobsList jobsList = Jobs.PacketLoadedJobsList.parseFrom(data);
         jobsList.getJobsList().forEach(job -> {
             if (!activeSubscriptions.containsKey(job.getUid())) {
@@ -81,7 +81,7 @@ public class MessageService {
 
     private void processNotifies(byte[] data) throws InvalidProtocolBufferException {
         PacketJobsNotifies notifies = PacketJobsNotifies.parseFrom(data);
-        //log.info("Пакет получен: {}", notifies);
+        log.info("Пакет получен: {}", notifies);
         notifies.getJobsNotifiesList().forEach(jobNotify -> {
             jobNotify.getNotifiesList().forEach(notify -> {
                 if (notify.hasJobSignalsWithMaxLevelChanged()) {
