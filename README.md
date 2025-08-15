@@ -56,8 +56,3 @@ Real-time система обнаружения сигналов радиоча�
   <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
   <img src="https://img.shields.io/badge/Log4j-1F1F1F?style=for-the-badge&logo=apache&logoColor=white" alt="Log4j">
 </div>
-
-## 🚀 Быстрый старт
-1. Собрать проект:
-```bash
-mvn clean package
