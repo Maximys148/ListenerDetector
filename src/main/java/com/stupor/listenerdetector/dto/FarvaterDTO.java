@@ -12,6 +12,6 @@ public class FarvaterDTO {
     private String latitude;
     private String longitude;
     private String port;
-    private String public_Id;
+    private String public_id;
     private String radius;
 }
