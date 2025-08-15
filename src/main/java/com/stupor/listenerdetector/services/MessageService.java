@@ -101,7 +101,7 @@ public class MessageService {
         if (job == null) return;
 
         SignalDto signalDto = convertToDto(jobUid, signal);
-        kafkaProducer.sendMessage("signal", signalDto);
+        kafkaProducer.sendMessage("ocusyncs", signalDto);
         log.info("Обработанный сигнал: {}", signalDto);
     }
 
