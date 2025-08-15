@@ -9,30 +9,23 @@ Real-time система обнаружения дронов через анал
 - **Масштабируемая архитектура** микросервисов
 - **Логирование** ключевых операций
 
-ListenerDetector/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   ├── listenerdetector/
-│   │   │   │   ├── Main.java              # Главный класс приложения
-│   │   │   │   ├── AudioListener.java     # Обработчик аудиопотока
-│   │   │   │   ├── Detector.java          # Детектор событий в аудио
-│   │   │   │   ├── Config.java            # Загрузка конфигурации
-│   │   │   │   ├── EventLogger.java       # Логирование событий
-│   │   │   │   └── utils/
-│   │   │   │       ├── FFT.java           # Алгоритм БПФ (анализ частот)
-│   │   │   │       └── AudioUtils.java    # Вспомогательные методы для работы с аудио
-│   │   │   └── resources/
-│   │   │       ├── config.properties      # Файл конфигурации
-│   │   │       └── log4j2.xml             # Настройки логирования
-│   │   └── generated/                     # Автогенерируемые файлы (если есть)
-│   └── test/                              # Тесты
-│       └── java/listenerdetector/
-│           ├── AudioListenerTest.java
-│           └── DetectorTest.java
-├── target/                                # Собранные артефакты (после компиляции)
-├── pom.xml                                # Конфигурация Maven
-└── README.md                              # Описание проекта
+## 📦 Основные компоненты
+
+### `config/`
+- `KafkaConfig.java` - Настройки продюсеров/консьюмеров Kafka
+- `WebSocketConfig.java` - Конфигурация WebSocket эндпоинтов
+
+### `controller/`
+- `SignalController.java` - REST API для управления системой
+- `WebSocketController.java` - Обработчик WebSocket сообщений
+
+### `service/`
+- `SignalProcessingService.java` - Основная логика обработки сигналов
+- `KafkaService.java` - Работа с Kafka топиками
+
+### `processor/`
+- `ProtoBufProcessor.java` - Преобразование .proto → Java DTO
+- `SignalAnalyzer.java` - Анализ RF сигналов
 
 ## 🛠️ Технологический стек
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
