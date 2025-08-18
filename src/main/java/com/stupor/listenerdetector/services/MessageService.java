@@ -100,7 +100,7 @@ public class MessageService {
         log.info("Проверяем максимальный сигнал: {}", job.toString());
         if (job == null) return;
 
-        SignalDto signalDto = convertToDto(jobUid, signal);
+        SignalDto signalDto = convertToDto(signal);
         kafkaProducer.sendMessage("ocusyncs", signalDto);
         log.info("Обработанный сигнал: {}", signalDto);
     }
@@ -130,17 +130,17 @@ public class MessageService {
         log.info("Оформлена подписка на задание: {}", jobUid);
     }
 
-    private SignalDto convertToDto(String jobUid, Notifies.JobSignalsWithMaxLevelChanged signal) {
+    private SignalDto convertToDto(Notifies.JobSignalsWithMaxLevelChanged signal) {
         log.info("Начата конвертация сигнала");
-        JobInfo job = activeSubscriptions.get(jobUid);
         LinuxTimeWithMs time = signal.getNotifiedAt();
+        double cfMHz = signal.getSignalInfo().getActiveSignal().getCfMHz();
         SignalDto dto = new SignalDto();
         dto.setDeviceImei("shtilFarvater-1");
-        dto.setFrequency(String.format("%.2f MHz", signal.getSignalInfo().getActiveSignal().getCfMHz()));
+        dto.setFrequency(String.format("%.2f MHz", cfMHz));
         dto.setTimestamp(time.getSec() * 1000 + time.getMs());
         dto.setMaxSignalLevel((double) signal.getSignalInfo().getActiveSignal().getLevelDb());
-        dto.setPrivateId("signal" + String.format("%.2f MHz", job.getFrequency()));
-        dto.setPublicId("signal" + String.format("%.2f MHz", job.getFrequency()));
+        dto.setPrivateId("signal " + String.format("%.2f MHz", cfMHz));
+        dto.setPublicId("signal " + String.format("%.2f MHz", cfMHz));
         dto.setDirection(signal.getSignalInfo().getAntennaInfo().getDirectionName());
         log.info("Закончили конвертацию сигнала");
         return dto;

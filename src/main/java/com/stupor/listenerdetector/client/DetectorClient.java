@@ -1,6 +1,7 @@
 package com.stupor.listenerdetector.client;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.stupor.listenerdetector.dto.DeviceState;
 import com.stupor.listenerdetector.services.MessageService;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -24,6 +25,7 @@ public class DetectorClient {
     @Autowired
     private MessageService messageService;
     private final CountDownLatch connectionLatch = new CountDownLatch(1);
+    private DeviceState deviceState;
 
     @Value("${websocket.server.url}")
     private String serverUrl;
@@ -36,6 +38,7 @@ public class DetectorClient {
                 @Override
                 public void onOpen(ServerHandshake handshakedata) {
                     log.info("Успешное подключение к WebSocket серверу");
+                    deviceState.setConnected(true);
                     connectionLatch.countDown();
                 }
 
@@ -58,6 +61,7 @@ public class DetectorClient {
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
                     log.warn("Соединение закрыто. Код: {}, Причина: {}", code, reason);
+                    deviceState.setConnected(false);
                     scheduleReconnect();
                 }
 

@@ -32,7 +32,7 @@ public class AppConfig {
     }
 
     @Bean
-    public DeviceState deviceModel() throws IOException {
+    public DeviceState deviceState() throws IOException {
         Resource resource = resourceLoader.getResource("classpath:SEH.json");
         InputStream inputStream = resource.getInputStream();
         DeviceState deviceState = objectMapper().readValue(inputStream, DeviceState.class);
