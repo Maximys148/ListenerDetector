@@ -5,6 +5,7 @@ import Scanner.Net.Api.Connectors.Notifiers;
 import Scanner.Net.Api.Data.Jobs;
 import Scanner.Net.Api.Data.Notifies;
 import Scanner.Net.Api.Data.Notifies.PacketJobsNotifies;
+import Scanner.Net.Api.Data.SignalsInfo;
 import Scanner.Net.Api.Packet.ApiPacket;
 import Scanner.Net.Api.Packet.ApiTypes;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -135,7 +136,7 @@ public class MessageService {
         LinuxTimeWithMs time = signal.getNotifiedAt();
         SignalDto dto = new SignalDto();
         dto.setDeviceImei("shtilFarvater-1");
-        dto.setFrequency(String.format("%.2f MHz", job.getFrequency()));
+        dto.setFrequency(String.format("%.2f MHz", signal.getSignalInfo().getActiveSignal().getCfMHz()));
         dto.setTimestamp(time.getSec() * 1000 + time.getMs());
         dto.setMaxSignalLevel((double) signal.getSignalInfo().getActiveSignal().getLevelDb());
         dto.setPrivateId("signal" + String.format("%.2f MHz", job.getFrequency()));
