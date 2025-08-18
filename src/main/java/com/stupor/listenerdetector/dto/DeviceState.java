@@ -21,7 +21,7 @@ public class DeviceState {
     private boolean isConnected; // Статус подключения
     private HashMap<String, String> character; // все остальное
     /**
-     * В character добавляется следующая инфа:
+     * В character добавляется следующая информация:
      * 1. IP адрес устройства - ip
      * 2. Порт устройства - port
      * 4. Азимут, если нужен (радар) - azimuth

@@ -20,6 +20,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.java_websocket.client.WebSocketClient;
@@ -37,6 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageService {
     private final Map<String, JobInfo> activeSubscriptions = new ConcurrentHashMap<>();
     private KafkaProducer kafkaProducer;
+    @Setter
     private WebSocketClient webSocketClient;
     private final Logger log = LogManager.getLogger(MessageService.class);
 
@@ -44,10 +46,7 @@ public class MessageService {
         this.kafkaProducer = kafkaProducer;
     }
 
-    public void setWebSocketClient(WebSocketClient webSocketClient) {
-        this.webSocketClient = webSocketClient;
-    }
-
+    // Получает сообщение от форватора, определяет его тип и перенаправляет в нужный обработчик
     public void processRawMessage(byte[] data) throws InvalidProtocolBufferException {
         ApiPacket.Message message = ApiPacket.Message.parseFrom(data);
 
@@ -105,6 +104,10 @@ public class MessageService {
         log.info("Обработанный сигнал: {}", signalDto);
     }
 
+    /*
+     Оформляется "подписка" на задание, т.е. слушаем определённую частоту на изменение или появление новых данных (которые находятся в src/main/proto),
+     после осуществлении подписки мы будем получать данные с этой частоты, подробнее про типы данных можно прочитать в документации, прикрепленной в .README этого проекта
+    */
     private void subscribeToJob(String jobUid) {
         // 1. Создаем подписку
         Notifiers.PacketRegisterJobNotifier subscription = Notifiers.PacketRegisterJobNotifier.newBuilder()
@@ -117,7 +120,7 @@ public class MessageService {
 
         // 2. Упаковываем в ApiPacket.Message
         ApiPacket.Message message = ApiPacket.Message.newBuilder()
-                .setType(ApiTypes.Types.CONNECTORS_REGISTER_JOB_NOTIFIER) // Указываем тип пакета!
+                .setType(ApiTypes.Types.CONNECTORS_REGISTER_JOB_NOTIFIER)
                 .setData(subscription.toByteString())
                 .build();
 
@@ -142,9 +145,7 @@ public class MessageService {
         return dto;
     }
 
-    /**
-     * Отправка бинарного сообщения через WebSocket
-     */
+    // Отправка сообщения по WebSocket
     public void sendMessage(byte[] data) {
         log.info("Отправляемое тело: {}", new String(data));
         if (webSocketClient != null && webSocketClient.isOpen()) {

@@ -48,14 +48,4 @@ public class AppConfig {
         deviceState.setCharacter(character);
         return deviceState;
     }
-    
-    /*@Bean
-    public MessageService messageProcessor() {
-        return new MessageService();
-    }
-    
-    @Bean
-    public DetectorClient detectorClient() {
-        return new DetectorClient();
-    }*/
 }
