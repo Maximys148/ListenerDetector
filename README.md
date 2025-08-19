@@ -22,7 +22,7 @@ Real-time система обнаружения сигналов радиоча�
   "public_id": "string",
   "radius": "string"
 }
-
+```
 ## 📄 Документация
 [Описание API](https://github.com/user-attachments/files/21795144/API.1.docx)
 
