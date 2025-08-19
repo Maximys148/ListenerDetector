@@ -66,6 +66,10 @@ public class MessageService {
         }
     }
 
+    /*
+    Получает список задач и кладёт их в мепу активных задач, по которым будут оформляться подписки для получении данных с задачи
+    Задача это диапозон частот которая слушает устройство, надо оформить подписку на задачу, чтобы получать с неё данные о сигналах
+    */
     private void processJobsList(byte[] data) throws InvalidProtocolBufferException {
         log.info("Полученное тело: {}", new String(data));
         Jobs.PacketLoadedJobsList jobsList = Jobs.PacketLoadedJobsList.parseFrom(data);
@@ -79,6 +83,9 @@ public class MessageService {
         });
     }
 
+    /*
+    Пакет данных из которых достаётся информация о сигналах
+    */
     private void processNotifies(byte[] data) throws InvalidProtocolBufferException {
         PacketJobsNotifies notifies = PacketJobsNotifies.parseFrom(data);
         log.info("Пакет получен: {}", notifies);
@@ -95,6 +102,7 @@ public class MessageService {
         });
     }
 
+    // Преобразуем данные о сигнале в DTO и отправляем в кафку
     private void processMaxLevelSignal(String jobUid, Notifies.JobSignalsWithMaxLevelChanged signal) {
         JobInfo job = activeSubscriptions.get(jobUid);
         log.info("Проверяем максимальный сигнал: {}", job.toString());

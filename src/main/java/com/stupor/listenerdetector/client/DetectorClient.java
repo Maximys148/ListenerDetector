@@ -25,6 +25,7 @@ public class DetectorClient {
     @Autowired
     private MessageService messageService;
     private final CountDownLatch connectionLatch = new CountDownLatch(1);
+    @Autowired
     private DeviceState deviceState;
 
     @Value("${websocket.server.url}")
