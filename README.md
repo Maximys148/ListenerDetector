@@ -23,6 +23,34 @@ Real-time система обнаружения сигналов радиоча�
   "radius": "5000"
 }
 ```
+!!!ВАЖНО
+- Добавить файл application.yml в src/main/resources/
+Ниже приведу пример файла
+```
+server:
+  port: 1111
+
+websocket:
+  server:
+    url: ws://${API_IP:localhost}:1111  # URL API "Обнаружителя"
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL:http://192.168.1.1:2222/eureka}
+spring:
+  application:
+    name: NODE-SHTIL-FARVATER-${NUM:1}
+  kafka:
+    producer:
+      bootstrap-servers: ${KAFKA_URL:192.168.1.1:2222}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      spring.json.add.type.headers: false
+  output:
+    ansi:
+      enabled: ALWAYS
+```
 ## 📄 Документация
 [Документаци для работы с .proto файлами](https://github.com/user-attachments/files/21795144/API.1.docx)
 
