@@ -14,7 +14,14 @@ Real-time система обнаружения сигналов радиоча�
 ###  MoveController
 `POST /api/shtilFarvater/dashboard_post` - Изменение координат устройства  
 **Тело запроса:** 
-FarvaterDto
+{
+  "ip": "192.168.1.100",
+  "latitude": "59.93428",
+  "longitude": "30.33510",
+  "port": "8080",
+  "public_id": "FARV-2023-001",
+  "radius": "5000"
+}
 
 ## 📄 Документация
 [Описание API](https://github.com/user-attachments/files/21795144/API.1.docx)
