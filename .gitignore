@@ -4,11 +4,14 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-# Игнорировать файлы с настройками
-/application.yml
-/application.properties
+# Игнорировать ВСЕ файлы application.yml в любых директориях
+**/application.yml
+**/application.properties
+
+# Игнорировать всю папку config кроме примеров
 /config/*
 !/config/application-example.yml
+!/config/application-example.properties
 
 ### STS ###
 .apt_generated
