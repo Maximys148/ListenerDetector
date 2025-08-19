@@ -15,12 +15,12 @@ Real-time система обнаружения сигналов радиоча�
 **Тело запроса:**
 ```json
 {
-  "ip": "string",
-  "latitude": "string",
-  "longitude": "string",
-  "port": "string",
-  "public_id": "string",
-  "radius": "string"
+  "ip": "192.168.1.100",
+  "latitude": "59.93428",
+  "longitude": "30.33510",
+  "port": "8080",
+  "public_id": "FARV-2023-001",
+  "radius": "5000"
 }
 ```
 ## 📄 Документация
