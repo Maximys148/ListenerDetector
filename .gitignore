@@ -4,6 +4,12 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Игнорировать файлы с настройками
+/application.yml
+/application.properties
+/config/*
+!/config/application-example.yml
+
 ### STS ###
 .apt_generated
 .classpath
